@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+">
+
+    <bean id = "CustomerBean" class = "ICHDApp.Customer">
+        <property name="accountName" value="John Philip"/>
+        <property name="firstName" value="John"/>
+        <property name="middleName" value="K"/>
+        <property name="lastName" value="Philip"/>
+        <property name="dateOfBirth" value="13"/>
+        <property name="monthOfBirth" value="09"/>
+        <property name="yearOfBirth" value="1975"/>
+        <property name="motherName" value="Kathy Philip"/>
+        <property name="emailID" value="John.Philip@hotmail.com"/>
+        <property name="gender" value="Male"/>
+        <property name="maritalStatus" value="Single"/>
+        <property name="houseNo" value="10 Park Street"/>
+        <property name="streetName" value="10 Park Street"/>
+        <property name="state" value="Florida"/>
+        <property name="city" value="Miami"/>
+        <property name="pincode" value="1A5012"/>
+        <property name="phone" value="56894561"/>
+        <property name="username" value="984568954"/>
+        <property name="password" value="56894561"/>
+    </bean>
+    <bean id="AccountBean" class="ICHDApp.Account">
+        <constructor-arg value="ICHD00010001"/>
+        <constructor-arg value="Savings"/>
+        <constructor-arg value="23/08/2010"/>
+        <constructor-arg value="10000"/>
+    </bean>
+    <bean id="FundTransferTransactionBean" class="ICHDApp.FundTransfer">
+        <constructor-arg value="10000"/>
+        <property name="transactionPassword" value="56894561"/>
+        <property name="toAccount" value="ICHD00010002"/>
+    </bean>
+    <bean id="transferProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="inst"/>
+        <property name="interceptorNames" value="fundTransferAdvisor"/>
+        <property name="proxyInterfaces" value="TransferFund.FundTransferApp"/>
+    </bean>
+    <bean id="inst" class="TransferFund.FundTransferImpl"/>
+    <bean id="fundTransferAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="fundTransferAdvice"/>
+        <property name="pointcut" ref="bookingPointCut"/>
+    </bean>
+    <bean id="fundTransferAdvice" class="TransferFund.FundTransferAdvice">
+        <property name="ValidateFundTransfer" ref="audience"/>
+    </bean>
+    <bean id="audience" class="TransferFund.ValidatingFundTransfer"/>
+    <bean id="bookingPointCut" class="org.springframework.aop.support.JdkRegexpMethodPointcut">
+        <property name="pattern" value=".*transferAmount"/>
+    </bean>
+</beans>
